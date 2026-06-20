@@ -33,7 +33,8 @@ export default function ProfileSettingsPage() {
     const fetchKeys = async () => {
       try {
         const token = localStorage.getItem("adpd_token");
-        const res = await fetch("http://localhost:5000/api/users/apikeys", {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${baseUrl}/api/users/apikeys`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
@@ -61,7 +62,8 @@ export default function ProfileSettingsPage() {
     setIsGenerating(true);
     try {
       const token = localStorage.getItem("adpd_token");
-      const res = await fetch("http://localhost:5000/api/users/apikeys", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const res = await fetch(`${baseUrl}/api/users/apikeys`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`

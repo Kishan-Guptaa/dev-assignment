@@ -37,7 +37,8 @@ export default function DashboardPage() {
     // Fetch reports/scans from DB if online, else load seeds
     const fetchScans = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/reports", {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${baseUrl}/api/reports`, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("adpd_token")}`
           }
@@ -66,7 +67,8 @@ export default function DashboardPage() {
             // Fetch dynamic API usage count
             let apiHitsCount = 0;
             try {
-              const keysRes = await fetch("http://localhost:5000/api/users/apikeys", {
+              const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+              const keysRes = await fetch(`${baseUrl}/api/users/apikeys`, {
                 headers: {
                   "Authorization": `Bearer ${localStorage.getItem("adpd_token")}`
                 }
@@ -89,7 +91,8 @@ export default function DashboardPage() {
             // Fetch API usage count for empty scan state too
             let apiHitsCount = 0;
             try {
-              const keysRes = await fetch("http://localhost:5000/api/users/apikeys", {
+              const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+              const keysRes = await fetch(`${baseUrl}/api/users/apikeys`, {
                 headers: {
                   "Authorization": `Bearer ${localStorage.getItem("adpd_token")}`
                 }

@@ -41,7 +41,8 @@ export default function ReportsHistoryPage() {
     const fetchReports = async () => {
       try {
         const token = localStorage.getItem("adpd_token");
-        const res = await fetch("http://localhost:5000/api/reports", {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${baseUrl}/api/reports`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();

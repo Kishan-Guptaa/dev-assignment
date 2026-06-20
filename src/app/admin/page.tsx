@@ -42,7 +42,8 @@ export default function AdminDashboardPage() {
     const fetchAdminData = async () => {
       try {
         const token = localStorage.getItem("adpd_token");
-        const res = await fetch("http://localhost:5000/api/admin/stats", {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${baseUrl}/api/admin/stats`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
