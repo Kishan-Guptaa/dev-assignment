@@ -4,6 +4,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import apiRouter from "./routes/index";
+import prisma from "./config/db";
 
 // Load configurations
 dotenv.config();
@@ -42,6 +43,17 @@ app.use("/api", apiRouter);
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
+});
+
+// Database health check endpoint
+app.get("/db-health", async (req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ db: "connected", timestamp: new Date().toISOString() });
+  } catch (err: any) {
+    console.error("Database health check failed:", err);
+    res.status(500).json({ db: "disconnected", error: err.message, timestamp: new Date().toISOString() });
+  }
 });
 
 // 404 Route handler
