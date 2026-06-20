@@ -1,0 +1,65 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id             String          @id @default(uuid())
+  name           String
+  email          String          @unique
+  password       String
+  role           Role            @default(USER)
+  createdAt      DateTime        @default(now())
+  scans          Scan[]
+  uploadedImages UploadedImage[]
+  apiKeys        ApiKey[]
+}
+
+model Scan {
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  url       String?        // Nullable for screenshot uploads
+  score     Int            // Ethical UX score (0-100)
+  status    String         // e.g., "safe", "warning", "danger"
+  createdAt DateTime       @default(now())
+  report    Report?
+  images    UploadedImage?
+}
+
+model Report {
+  id              String   @id @default(uuid())
+  scanId          String   @unique
+  scan            Scan     @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  darkPatterns    Json     // Array of detected issues: { category, text, severity, explanation }
+  recommendations Json     // Array of fixes: { pattern, fixAdvice }
+  createdAt       DateTime @default(now())
+}
+
+model UploadedImage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scanId    String?  @unique
+  scan      Scan?    @relation(fields: [scanId], references: [id], onDelete: SetNull)
+  imageUrl  String
+  createdAt DateTime @default(now())
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String   @unique
+  hits      Int      @default(0)
+  createdAt DateTime @default(now())
+}
