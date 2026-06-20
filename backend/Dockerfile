@@ -1,5 +1,8 @@
 # Build Stage
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
+
+# Install OpenSSL for Prisma
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -15,7 +18,10 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production Stage
-FROM node:18-alpine
+FROM node:18-slim
+
+# Install OpenSSL for Prisma
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -28,3 +34,4 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 EXPOSE 5000
 
 CMD ["node", "dist/index.js"]
+
